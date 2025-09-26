@@ -4,14 +4,15 @@ import requests
 import os
 import json
 
+# Load credentials once from environment
 credentials_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"])
 credentials = service_account.Credentials.from_service_account_info(credentials_info)
 
+# Create a single client using credentials
 client = documentai.DocumentProcessorServiceClient(credentials=credentials)
 
 def run_ocr_file(file_path, project_id, location, processor_id):
     """Extract text from a local file (PDF, PNG, JPG)"""
-    client = documentai.DocumentProcessorServiceClient()
     name = client.processor_path(project_id, location, processor_id)
 
     with open(file_path, "rb") as f:
@@ -33,11 +34,9 @@ def run_ocr_file(file_path, project_id, location, processor_id):
 
 def run_ocr_url(image_url, project_id, location, processor_id):
     """Extract text from an image URL"""
-    # Download the image temporarily
     response = requests.get(image_url)
     response.raise_for_status()
 
-    client = documentai.DocumentProcessorServiceClient()
     name = client.processor_path(project_id, location, processor_id)
 
     raw_document = documentai.RawDocument(
@@ -52,4 +51,3 @@ def run_ocr_url(image_url, project_id, location, processor_id):
 
     result = client.process_document(request=request)
     return result.document.text
-
