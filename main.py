@@ -19,8 +19,11 @@ class NotesRequest(BaseModel):
     notes: str
     num_questions: int = 5
 
+@app.get("/")
+def root():
+    return {"msg": "App is live!"}
 
-@app.post("/ocr/pdf")
+
 async def ocr_pdf(file: UploadFile = File(...)):
     if not file.filename.endswith(".pdf"):
         return {"error": "Please upload a PDF file"}
@@ -61,4 +64,5 @@ async def ocr_to_quiz_pdf(file: UploadFile = File(...), num_questions: int = 5):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))  
+
     uvicorn.run(app, host="0.0.0.0", port=port)
