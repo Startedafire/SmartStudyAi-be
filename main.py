@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 import ocrService, aiService
 from dotenv import load_dotenv
+import uvicorn
 import os
 
 load_dotenv()
@@ -57,3 +58,7 @@ async def ocr_to_quiz_pdf(file: UploadFile = File(...), num_questions: int = 5):
         "file": file.filename,
         "quiz": quiz
     }
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  
+    uvicorn.run(app, host="0.0.0.0", port=port)
